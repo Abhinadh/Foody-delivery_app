@@ -1,0 +1,322 @@
+.home-container-kjmn {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  overflow: hidden;
+}
+
+/* Scrolling Container */
+.scroll-container-kjmn {
+  display: flex;
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  white-space: nowrap;
+}
+
+/* Infinite Scroll Animation */
+@keyframes infiniteScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.3%); } /* Moves exactly 1/3 of the total items */
+}
+
+.scroll-wrapper-kjmn {
+  display: flex;
+  gap: 20px;
+  animation: infiniteScroll 10s linear infinite;
+  align-items: center;
+  width: max-content;
+}
+
+/* Seamless Scrolling */
+.scroll-wrapper-kjmn:hover {
+  animation-play-state: paused; /* Pause animation on hover */
+}
+/* Food Icons */
+.food-icon-kjmn {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+/* Hover Effect */
+.food-icon-kjmn:hover {
+  transform: scale(1.1);
+}
+
+
+
+/* Gradient Fade for Smoothness */
+.scroll-container-kjmn::before,
+.scroll-container-kjmn::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100%;
+  top: 0;
+  z-index: 2;
+  background: linear-gradient(to right, #f8f9fa, transparent);
+}
+
+.scroll-container-kjmn::after {
+  right: 0;
+  transform: rotate(180deg);
+}
+
+
+/* Container for Menu Items */
+.menu-grid-kjmn {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+/* Individual Menu Card */
+.menu-card-kjmn {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+    padding: 15px;
+}
+
+.menu-card-kjmn:hover {
+    transform: scale(1.05);
+}
+
+/* Menu Item Image */
+.menu-image-kjmn {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Menu Item Info */
+.menu-info-kjmn {
+    padding: 10px;
+}
+
+.menu-info-kjmn h3 {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.menu-desc-kjmn {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.menu-price-kjmn {
+    font-size: 1em;
+    font-weight: bold;
+    color: #ff0000;
+}
+
+/* No Items Message */
+.no-items {
+    text-align: center;
+    font-size: 1.2em;
+    color: #888;
+    margin-top: 20px;
+}
+
+/* Horizontal Scroll Container */
+.menu-scroll-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-top: 20px;
+  padding: 20px 0;
+  overflow: hidden;
+}
+
+/* Scroll Buttons */
+.scroll-btn {
+  background-color: #ff6f61;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  z-index: 10;
+}
+
+.scroll-btn.left {
+  left: 0;
+}
+
+.scroll-btn.right {
+  right: 0;
+}
+
+.scroll-btn:hover {
+  background-color: #ff3b2e;
+}
+
+/* Wrapper for Horizontally Scrolling Items */
+.menu-scroll-wrapper {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 15px;
+  padding: 10px;
+  white-space: nowrap;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.menu-scroll-wrapper::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari */
+}
+
+/* Individual Menu Card */
+.menu-card-kjmn {
+  min-width: 250px;
+  max-width: 250px;
+  background: transparent;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+  padding: 15px;
+  display: inline-block;
+}
+
+.menu-card-kjmn:hover {
+  transform: scale(1.05);
+}
+
+/* Menu Item Image */
+.menu-image-kjmn {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 20px;
+  
+ }
+
+/* Menu Item Info */
+.menu-info-kjmn {
+  padding: 10px;
+}
+
+.menu-info-kjmn h3 {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
+
+.menu-desc-kjmn {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.menu-price-kjmn {
+  font-size: 1em;
+  font-weight: bold;
+  color: #ff0000;
+}
+
+/* No Items Message */
+.no-items {
+  text-align: center;
+  font-size: 1.2em;
+  color: #888;
+  margin-top: 20px;
+}
+
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.buy-now-btn {
+  background-color: #28a745; /* Green color */
+  color: white;
+  border: none;
+  margin-left: 95px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.buy-now-btn:hover {
+  background-color: #218838;
+}
+
+.filter-container {
+  display: flex;
+  gap: 10px;
+  margin: 10px 20px;
+}
+
+.filter-btn {
+  background-color: #dddddd00;
+  border: 1px solid black;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.filter-btn.active {
+  background-color: rgb(16, 159, 44);
+  color: white;
+}
+
+
+.best-restaurants-container {
+  text-align: left;
+  margin: 20px;
+}
+
+.restaurant-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 items per row */
+  gap: 15px;
+}
+
+.restaurant-box {
+  padding: 15px;
+  background: transparent;
+  border: 1px solid black;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 16px;
+}
+
+.star-rating {
+  display: flex;
+  color: gold;
+}

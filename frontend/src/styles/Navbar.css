@@ -1,0 +1,190 @@
+.nav-ahja {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #242526;
+  padding: 12px 20px;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative; /* Ensure it stays on top */
+  z-index: 1002; /* Higher than sidebar and overlay */
+}
+
+.nav-left-ahja {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo-ahja {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+
+.search-ahja {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  width: 250px;
+}
+
+.nav-right-ahja {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.cart-ahja{
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+}
+
+.signin-ahja {
+  background:transparent; /* Professional blue color */
+  color: #fff; /* White text */
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border:1px solid rgb(178, 173, 173);
+  border-radius: 20px;
+  cursor: pointer;
+
+
+}
+
+.signin-ahja:hover {
+  background-color: #db4d10; /* Darker blue on hover */
+  color: white;
+
+}
+
+
+
+
+.profile-ahja {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.profile-ahja svg {
+  color: white; /* Adjust the color as needed */
+  font-size: 24px; /* Adjust size if needed */
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7)); /* Glow effect */
+  transition: filter 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.profile-ahja:hover svg {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1)); /* Increased glow on hover */
+  transform: scale(1.1); /* Slight scaling effect */
+}
+
+
+.sidebar-ahja {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 40px rgba(0, 0, 0, 0.729);
+  padding: 10px 20px;
+  border-radius: 30px 0 0 30px;
+  transform: translateX(110%);
+  transition: transform 1.3s cubic-bezier(0.22, 1, 0.36, 1); /* Ultra smooth, gradual ease */
+  z-index: 1001;
+  margin-top: 65px;
+}
+
+/* Active state for sidebar */
+.sidebar-ahja.active {
+  transform: translateX(0);
+}
+
+.close-sidebar {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  float: right;
+  padding: 5px;
+}
+
+.sidebar-ahja ul {
+  list-style: none;
+  padding: 40px 0; /* More breathing space */
+}
+
+.sidebar-ahja ul li {
+  padding: 18px 0;
+}
+
+.sidebar-ahja ul li button, 
+.sidebar-ahja ul li a {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #333;
+}
+
+/* Smooth Background Overlay */
+.overlay-ahja {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 1.3s ease-in-out; /* Ultra-smooth fade */
+}
+
+.overlay-ahja.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+.logout-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    animation: fadeOut 1.5s forwards;
+}
+
+.logout-icon {
+    font-size: 50px;
+    color: #FF4500;
+    animation: scaleUp 0.5s ease-in-out;
+}
+
+@keyframes scaleUp {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}

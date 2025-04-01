@@ -1,0 +1,21 @@
+.btn-toggle {
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 20px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-toggle.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-toggle.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-toggle:hover {
+    transform: scale(1.05);
+}

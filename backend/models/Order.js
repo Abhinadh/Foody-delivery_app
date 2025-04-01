@@ -1,16 +1,19 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const OrderSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
-    deliveryBoy: { type: mongoose.Schema.Types.ObjectId, ref: 'DeliveryBoy', default: null },
-    items: [{ name: String, price: Number, quantity: Number }],
-    totalAmount: Number,
-    status: { type: String, enum: ['Pending', 'Accepted', 'Assigned', 'Delivered'], default: 'Pending' },
-    deliveryLocation: {
-        lat: Number,
-        lng: Number
-    }
-}, { timestamps: true });
+const orderSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    itemId: { type: mongoose.Schema.Types.ObjectId, ref: "MenuItem", required: true },
+    quantity: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
+    restaurantName: { type: String, required: true },
+    restaurantEmail: { type: String, required: true },
+    location: { type: String, required: true },
+    buyerName: { type: String, required: true },
+    bookingDate: { type: Date, default: Date.now },
+    status: { type: String, default: "Pending" },
+    createdAt: { type: Date, default: Date.now },  // Automatically stores the order timestamp
+    estimatedDeliveryTime: { type: String }
+});
 
-module.exports = mongoose.model('Order', OrderSchema);
+module.exports = mongoose.model("Order", orderSchema);
+

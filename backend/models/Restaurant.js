@@ -7,10 +7,11 @@ const RestaurantSchema = new mongoose.Schema({
     address: String,
     phone: String,
     location: {
-        lat: Number,
-        lng: Number
+        lat: { type: Number, required: true },
+        lng: { type: Number, required: true }
     },
-    approved: { type: Boolean, default: false } // Admin approval required
+    approved: { type: Boolean, default: false }, // Admin approval required
+    rating: { type: Number, default: 3 } // Default rating set to 3
 }, { timestamps: true });
 
 module.exports = mongoose.model('Restaurant', RestaurantSchema);

@@ -1,0 +1,92 @@
+.yu-modal {
+    display: flex;
+    flex-direction: row;
+    background: white;
+    width: 95%;
+    max-width: 900px;
+    height: 450px;
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+   
+}
+
+.left-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-right: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.right-section {
+    flex: 1;
+    height: 100%;
+}
+
+.fg-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.hi-header {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.jk-info {
+    margin-bottom: 10px;
+}
+
+.mn-label, .op-label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.quantity-control {
+    margin-left:40px ;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.quantity-btn {
+    background: #ff4500;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.qr-location-input {
+    width: calc(100% - 40px);
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.gps-btn {
+    background: #007bff;
+    border: none;
+    color: white;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.uv-order-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
