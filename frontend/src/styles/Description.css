@@ -152,4 +152,234 @@
     }
 }
 
-
+/* Login Message Container */
+.login-message-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    height: 100%;
+  }
+  
+  .login-message {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    animation: message-pop 0.5s ease-out forwards;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  @keyframes message-pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  .login-message h3 {
+    margin-top: 1rem;
+    color: #e53935;
+    font-size: 1.8rem;
+    animation: slide-up 0.6s ease-out forwards;
+  }
+  
+  .login-message-text {
+    animation: slide-up 0.7s ease-out forwards;
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+  }
+  
+  @keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Doodle Animation */
+  .login-doodle {
+    height: 120px;
+    width: 120px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .doodle-character {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    animation: bounce 3s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  
+  .doodle-face {
+    width: 80px;
+    height: 80px;
+    background-color: #FFD166;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+    border: 3px solid #333;
+  }
+  
+  .doodle-eyes {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 25px;
+  }
+  
+  .doodle-eye {
+    width: 12px;
+    height: 16px;
+    background-color: #333;
+    border-radius: 50%;
+    animation: blink 4s infinite;
+  }
+  
+  @keyframes blink {
+    0%, 97%, 100% { transform: scaleY(1); }
+    98%, 99% { transform: scaleY(0.1); }
+  }
+  
+  .doodle-mouth {
+    width: 30px;
+    height: 10px;
+    background-color: #333;
+    border-radius: 0 0 30px 30px;
+    margin: 10px auto 0;
+    position: relative;
+    animation: talk 2s infinite;
+  }
+  
+  @keyframes talk {
+    0%, 100% { height: 10px; }
+    50% { height: 5px; }
+  }
+  
+  .doodle-body {
+    width: 60px;
+    height: 50px;
+    background-color: #06D6A0;
+    border-radius: 10px;
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 3px solid #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .doodle-lock {
+    width: 25px;
+    height: 20px;
+    background-color: #EF476F;
+    border-radius: 4px;
+    position: relative;
+    animation: pulse 2s infinite;
+  }
+  
+  .doodle-lock:before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: transparent;
+    border: 3px solid #333;
+    border-radius: 50%;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  
+  /* Line Animation */
+  .login-line-animation {
+    height: 3px;
+    width: 0;
+    background: linear-gradient(90deg, #06D6A0, #EF476F, #FFD166);
+    margin: 0 auto 1.5rem;
+    animation: line-grow 1.5s ease-out forwards;
+  }
+  
+  @keyframes line-grow {
+    0% { width: 0; }
+    100% { width: 80%; }
+  }
+  
+  /* Button Styles */
+  .login-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    animation: slide-up 0.8s ease-out forwards;
+  }
+  
+  .cancel-btn {
+    padding: 10px 18px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .cancel-btn:hover {
+    background-color: #e6e6e6;
+  }
+  
+  .login-btn {
+    padding: 10px 24px;
+    background-color: #e53935;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .login-btn:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(229, 57, 53, 0.3);
+  }
+  
+  .btn-sparkle {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.7);
+    width: 20px;
+    height: 50px;
+    transform: rotate(45deg);
+    animation: sparkle 3s infinite;
+    left: -30px;
+  }
+  
+  @keyframes sparkle {
+    0% { left: -30px; }
+    20% { left: 110%; }
+    100% { left: 110%; }
+  }

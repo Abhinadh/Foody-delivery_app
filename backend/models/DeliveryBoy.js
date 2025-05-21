@@ -7,7 +7,8 @@ const DeliveryBoySchema = new mongoose.Schema({
     phone: String,
     assignedRegions: [String],  // Changed to an array to support multiple regions
     available: { type: Boolean, default: true },
-    assignmentsCount: { type: Number, default: 0 }, // Track number of active orders
+    assignmentsCount: { type: Number, default: 0 },
+    salary: { type: Number, default: 0 }, // Track number of active orders
     currentOrders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }] // Track current orders
 }, { timestamps: true });
 

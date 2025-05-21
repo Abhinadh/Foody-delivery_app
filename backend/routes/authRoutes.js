@@ -12,14 +12,17 @@ const multer = require("multer");
 const path = require("path")
 const axios = require('axios');
 const Order = require("../models/Order");
+const Feedback = require("../models/Feedback")
 const Dabbawala = require("../models/Dabbawala");
 const RestaurantBooking = require('../models/RestaurantBooking');
 const calculateDistance = require('../utils/calculateDistance');
+const Payment = require('../models/Payment')
 const router = express.Router();
 
 
 
 const nodemailer = require("nodemailer");
+const MenuItem = require("../models/MenuItem");
 
 router.post("/admin/send-approval-email", async (req, res) => {
     const { email } = req.body;
@@ -27,7 +30,7 @@ router.post("/admin/send-approval-email", async (req, res) => {
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
-        auth: {
+        auth: {   
             user: "foodybuddy111@gmail.com",
             pass: "rzkhryrysnundyso",
         },
@@ -64,7 +67,7 @@ router.post("/admin/approve/restaurant/:id", async (req, res) => {
 
 // REGISTER NEW USER
 router.post('/register', async (req, res) => {
-    const { name, email, password, role, latitude, longitude,address, assignedRegion } = req.body;
+    const { name, email, password,phone, role, latitude, longitude,address, assignedRegion } = req.body;
 
     try {
         // Check if account already exists
@@ -87,7 +90,7 @@ router.post('/register', async (req, res) => {
 
         let user;
         if (role === 'user') {
-            user = new User({ name, email, password: hashedPassword });
+            user = new User({ name, email,phone, password: hashedPassword });
         } else if (role === 'restaurant') {
             user = new Restaurant({ 
                 name, 
@@ -533,7 +536,9 @@ router.post("/place", async (req, res) => {
     console.log("✅ Route /place was hit");
 
     try {
-        const { userId, itemId, quantity, totalPrice, restaurantName, restaurantEmail, location, buyerName } = req.body;
+        console.log(req.body);
+        const { userId, itemId, quantity, totalPrice, restaurantName, restaurantEmail, location,selectedLocation, buyerName } = req.body;
+        console.log(req.body);
 
         if (!userId || !itemId || !quantity || !totalPrice || !restaurantName || !restaurantEmail || !location || !buyerName) {
             console.log("❌ Missing required fields");
@@ -553,14 +558,28 @@ router.post("/place", async (req, res) => {
         const restaurantLocation = restaurant.address;
         console.log(`🏬 Restaurant Location for ${restaurantName}: ${restaurantLocation}`);
 
-        // Save order
-      
+        // Check and update menu item availability
+        const menuItem = await MenuItem.findById(itemId); 
+        if (!menuItem) {
+            console.log("❌ Menu item not found");
+            return res.status(404).json({ message: "Menu item not found" });
+        }
 
+        if (menuItem.stockCount < quantity) {
+            console.log(`❌ Not enough items available. Requested: ${quantity}, Available: ${menuItem.stockCount}`);
+            return res.status(400).json({ 
+                message: `Not enough items available. Only ${menuItem.availability} left in stock.` 
+            });
+        }
 
-
+        // Update menu item availability by reducing the quantity
+        menuItem.stockCount -= quantity;
+        console.log(`📦 Updating menu item availability. New availability: ${menuItem.stockCount}`);
+        await menuItem.save();
+        console.log("✅ Menu item availability updated");
 
         // Extract location parts
-        const locationParts = location.split(",").map(part => part.trim()).slice(1); // Remove house number
+        const locationParts = location.split(",").map(part => part.trim()); // Remove house number
         console.log("📌 Extracted location parts:", locationParts);
 
         let assignedDeliveryBoy = null;
@@ -584,8 +603,28 @@ router.post("/place", async (req, res) => {
 
         console.log(restaurantLocation);
         console.log(location);
-        const estimatedTime = await calculateDistance(restaurantLocation, location);
+        
+        // Get estimated delivery time and ensure it's a valid number
+        let estimatedTime = await calculateDistance(restaurantLocation, location);
+        // Safety check - ensure estimatedTime is a valid number
+        if (typeof estimatedTime !== 'number' || isNaN(estimatedTime) || estimatedTime <= 0) {
+            console.log("⚠️ Invalid estimated time, using default value");
+            estimatedTime = 30; // Default to 30 minutes if invalid
+        }
         console.log(`⏳ Estimated Delivery Time: ${estimatedTime} mins`);
+
+        // Calculate delivery payment based on distance
+        const deliveryPayment = calculateDeliveryPayment(estimatedTime);
+        console.log(`💰 Delivery payment: ${deliveryPayment}`);
+
+        // Update delivery boy salary with proper validation
+        // Ensure existing salary is a valid number
+        const currentSalary = typeof assignedDeliveryBoy.salary === 'number' && !isNaN(assignedDeliveryBoy.salary) 
+            ? assignedDeliveryBoy.salary 
+            : 0;
+            
+        assignedDeliveryBoy.salary = currentSalary + deliveryPayment;
+        console.log(`💵 Updated salary for delivery boy: ${assignedDeliveryBoy.salary}`);
 
         const newOrder = new Order({
             userId,
@@ -595,13 +634,13 @@ router.post("/place", async (req, res) => {
             restaurantName,
             restaurantEmail,
             location,
+            selectedLocation,
             buyerName,
             bookingDate: new Date(),
             status: "On Order",
             createdAt: new Date(),
             estimatedDeliveryTime: estimatedTime // Save estimated time
         });
-        
         
         console.log("📌 Saving order...");
         await newOrder.save();
@@ -617,11 +656,9 @@ router.post("/place", async (req, res) => {
             estimatedDeliveryTime: estimatedTime // Save estimated time
         });
 
-        
         console.log("📌 Saving restaurant booking...");
         await newBooking.save();
         console.log("✅ Restaurant booking saved:", newBooking);
-
 
         // Update delivery boy assignments
         assignedDeliveryBoy.assignmentsCount = (assignedDeliveryBoy.assignmentsCount || 0) + 1;
@@ -646,7 +683,21 @@ router.post("/place", async (req, res) => {
     }
 });
 
-
+// Helper function to calculate delivery payment based on estimated time
+function calculateDeliveryPayment(estimatedTime) {
+    // Ensure estimatedTime is a valid number
+    if (typeof estimatedTime !== 'number' || isNaN(estimatedTime) || estimatedTime <= 0) {
+        estimatedTime = 30; // Default value if invalid
+    }
+    
+    // Base payment for any delivery
+    const basePayment = 50;
+    
+    // Additional payment based on delivery time (distance)
+    const timeBasedPayment = estimatedTime * 2;
+    
+    return basePayment + timeBasedPayment;
+}
 router.get("/orders/:userId", async (req, res) => {
     try {
         const { userId } = req.params;
@@ -690,6 +741,8 @@ router.get("/orders/:userId", async (req, res) => {
         console.error("Error fetching orders:", error);
         res.status(500).json({ error: "Internal server error" });
     }
+
+
 });
 
 // Update order status
@@ -914,7 +967,530 @@ router.post("/dabbawala/create", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+//////////// dabbawals delivery
+router.get("/dabbawalaRequests/:email", async (req, res) => {
+    try {
+        const { email } = req.params;
 
+        const deliveryboy = await DeliveryBoy.findOne({ email: email });
+
+        if (!deliveryboy) {
+            return res.status(404).json({ message: "Delivery boy not found" });
+        }
+
+        // Fetch all pending requests
+        const requests = await Dabbawala.find({ 
+            status: { $in: ["Pending", "Out for Delivery"] } 
+          });
+
+        // Filter requests where deliveryId matches the delivery boy's ID
+        const filteredRequests = requests.filter(request => request.deliveryBoyId.toString() === deliveryboy._id.toString());
+
+        // Ensure the response is an array
+        if (Array.isArray(filteredRequests)) {
+            console.log("matched...........................")
+            return res.json(filteredRequests);  // Send array of filtered requests
+        } else {
+            console.log("no match ........................")
+            return res.status(400).json({ message: "No matching requests found or invalid response format" });
+        }
+    } catch (error) {
+        console.error("Error fetching requests:", error);
+        return res.status(500).json({ message: "Error fetching dabbawala requests" });
+    }
+});
+
+/////////dabbawala service 
+router.put("/dabbwala/status/:orderId", async (req, res) => {
+    try {
+        const { status } = req.body;
+        const updatedOrder = await Order.findByIdAndUpdate(
+            req.params.orderId,
+            { status },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.json({ updatedOrder });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+// Update dabba Status
+router.put("/dabba/status/:orderId", async (req, res) => {
+    try {
+        const { status } = req.body;
+        const updatedOrder = await Dabbawala.findByIdAndUpdate(
+            req.params.orderId,
+            { status },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.json({ updatedOrder });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+router.delete('/cart/clear/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      // Delete all cart items that belong to this user
+      await Cart.deleteMany({ userId: userId });
+      
+      res.status(200).json({ message: 'Cart cleared successfully' });
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      res.status(500).json({ error: 'Failed to clear cart' });
+    }
+  });
+
+  router.post('/feedback/add', async (req, res) => {
+    try {
+       
+      const { itemId,restaurantEmail, rating, comment, orderId,userId } = req.body;
+     console.log( itemId,restaurantEmail, rating, comment, orderId,userId);
+      
+      
+      if (!restaurantEmail || !rating) {
+        return res.status(400).json({ message: 'Restaurant ID and rating are required' });
+      }
+      
+      // Create new feedback
+      const feedback = new Feedback({
+        itemId,
+        restaurantEmail,
+        userId,
+        rating,
+        comment,
+        orderId
+      });
+      
+      await feedback.save();
+      console.log("hello");
+      
+      // Update the restaurant's ratings array
+      const restaurant = await Restaurant.findOne({email:restaurantEmail});
+      const item = await Menu.findById(itemId);
+      console.log("hello",restaurant);
+      
+      if (!restaurant) {
+        return res.status(404).json({ message: 'Restaurant not found' });
+      }
+      
+      const oldMenuRating = item.rating;
+      item.rating = ( oldMenuRating + rating ) / 2;
+      const oldrating = restaurant.rating;
+      restaurant.rating = (oldrating + rating ) / 2;
+      
+
+      await restaurant.save();
+      
+      res.status(201).json({
+        success: true,
+        message: 'Feedback submitted successfully'
+      });
+      
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  router.get('/feedback/fetch', async (req, res) => {
+    try {
+        const feedback = await Feedback.find().populate('orderId', 'orderNumber');
+        console.log(feedback);
+        res.json(feedback);
+
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching feedback", error });
+    }
+});
+// 
+router.post("payment/save-payment", async (req, res) => {
+    try {
+        const { userId, amount, transactionId, status } = req.body;
+
+        const newPayment = new Payment({
+            userId,
+            amount,
+            transactionId,
+            status
+        });
+
+        await newPayment.save();
+        res.status(201).json({ message: "Payment saved successfully!" });
+    } catch (error) {
+        console.error("Error saving payment:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+router.get('/restaurants/name/:restaurantId', async (req, res) => {
+    try {
+        const { restaurantId } = req.params;
+        
+        // Ensure it's a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
+            return res.status(400).json({ message: "Invalid restaurant ID format" });
+        }
+
+        console.log("Fetching restaurant with ID:", restaurantId);
+
+        const restaurant = await Restaurant.findOne({ _id: restaurantId });
+
+        if (!restaurant) {
+            return res.status(404).json({ message: "Restaurant not found" });
+        }
+
+        res.json(restaurant);
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+//reatuarntmodel fetch all menu
+router.get('/menu-items/restaurant/:restaurantEmail', async (req, res) => {
+    try {
+        const { restaurantEmail } = req.params;
+        console.log("Restaurant Email:", restaurantEmail);
+
+        // Find account with the given email
+        const account = await Account.findOne({ email: restaurantEmail });
+        console.log("Account Found:", account);
+
+        if (!account) {
+            return res.status(404).json({ message: "Account not found for this email" });
+        }
+
+        // Find menu items linked to this restaurant's account
+        const menuItems = await MenuItem.find({ restaurantId: account._id });
+        console.log("Account Found:", menuItems);
+
+        if (!menuItems || menuItems.length === 0) {
+            return res.status(404).json({ message: "No menu items found for this restaurant" });
+        }
+
+        res.json({ menuItems });
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+// router.get('/api/auth/menu-items/:itemId', async (req, res) => {
+//     try {
+//       const itemId = req.params.itemId;
+//       const menuItem = await MenuItem.findById(itemId);
+      
+//       if (!menuItem) {
+//         return res.status(404).json({ message: 'Menu item not found' });
+//       }
+      
+//       res.json(menuItem);
+//     } catch (err) {
+//       console.error('Error fetching menu item:', err);
+//       res.status(500).json({ message: 'Server error' });
+//     }
+//   });
+  
+  // Cancel order
+  router.delete('/cancel-order/:orderId', async (req, res) => {
+    try {
+      
+      const orderId = req.params.orderId;
+      const order = await Order.findById(orderId);
+      console.log(orderId)
+      
+      if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+      
+      // Only allow cancellation if the order is in the "On Order" state
+      if (order.status !== 'On Order') {
+        return res.status(400).json({ message: 'Cannot cancel order at current status' });
+      }
+      
+      await Order.findByIdAndDelete(orderId);
+      res.json({ message: 'Order cancelled successfully' });
+    } catch (err) {
+      console.error('Error cancelling order:', err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+//order cancel emailsender
+    router.post('/order/send-cancel-email', async (req, res) => {
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "foodybuddy111@gmail.com",
+                pass: "rzkhryrysnundyso",
+            },
+        });
+        try {
+          const { to, subject, orderDetails } = req.body;
+          
+          if (!to || !subject || !orderDetails) {
+            return res.status(400).json({ error: 'Missing required fields' });
+          }
+          
+          // Format the date for the email
+          const orderDate = new Date(orderDetails.orderDate).toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          
+          // Create email HTML template
+          const emailHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
+                .header { background-color: #3B82F6; color: white; padding: 20px; text-align: center; }
+                .content { padding: 20px; }
+                .order-details { background-color: #F3F4F6; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                .refund-info { background-color: #ECFDF5; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #10B981; }
+                .footer { text-align: center; padding: 20px; font-size: 12px; color: #6B7280; }
+                .button { background-color: #3B82F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <h1>Order Cancellation Confirmation</h1>
+              </div>
+              <div class="content">
+                <p>Dear Customer,</p>
+                <p>Your order has been successfully cancelled as requested. Here are the details:</p>
+                
+                <div class="order-details">
+                  <p><strong>Order ID:</strong> #${orderDetails.orderId.substring(orderDetails.orderId.length - 6)}</p>
+                  <p><strong>Restaurant:</strong> ${orderDetails.restaurantName}</p>
+                  <p><strong>Item:</strong> ${orderDetails.itemName}</p>
+                  <p><strong>Order Date:</strong> ${orderDate}</p>
+                  <p><strong>Total Amount:</strong> $${orderDetails.totalAmount}</p>
+                </div>
+                
+                <div class="refund-info">
+                  <h3>Refund Information</h3>
+                  <p>A refund of <strong>$${orderDetails.totalAmount}</strong> has been initiated to your original payment method.</p>
+                  <p>Please allow 3-5 business days for the refund to reflect in your account.</p>
+                </div>
+                
+                <p>If you have any questions about your cancellation or refund, please contact our customer support team.</p>
+                
+                <p>Thank you for using our service!</p>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                  <a href="http://localhost:3000/my-orders" class="button">View My Orders</a>
+                </div>
+              </div>
+              <div class="footer">
+                <p>This is an automated message, please do not reply directly to this email.</p>
+                <p>&copy; 2025 Food Delivery App. All rights reserved.</p>
+              </div>
+            </body>
+            </html>
+          `;
+          
+          // Send the email
+          console.log(to)
+          console.log("helooooooooooooooooooooooooooooooooooooooooooooooooo")
+          const mailOptions = {
+            from: "foodybuddy111@gmail.com",
+            to: to,
+            subject: subject,
+            html: emailHtml
+          };
+          
+          await transporter.sendMail(mailOptions);
+          
+          // Update order status in database to "Cancelled"
+          if (orderDetails.orderId) {
+            await Order.findByIdAndUpdate(
+              orderDetails.orderId,
+              { status: "Cancelled", cancellationDate: new Date() }
+            );
+          }
+          
+          res.status(200).json({ success: true, message: 'Cancellation email sent successfully' });
+        } catch (error) {
+          console.error('Email sending error:', error);
+          res.status(500).json({ error: 'Failed to send email', details: error.message });
+        }
+      });
+      
+
+
+
+router.post("/admin/approve/restaurant/:id", async (req, res) => {
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "foodybuddy111@gmail.com",
+            pass: "rzkhryrysnundyso",
+        },
+    });
+    try {
+        console.log("Restaurant ID:", req.params.id);
+        const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, {approved: true }, { new: true });
+        res.json(restaurant);
+    } catch (error) {
+        res.status(500).json({ message: "Error approving restaurant" });
+    }
+});
+//homepage restaurant name
+router.get('/menu-items/restaurant/name/:restaurantId', async (req, res) => {
+    try {
+      const { restaurantId } = req.params;
+      console.log("Restaurant ID:", restaurantId);
+      
+      // Find account with the given ID
+      const account = await Account.findOne({ _id: restaurantId });
+      console.log("Account Found:", account);
+      
+      if (!account) {
+        return res.status(404).json({ message: "Account not found" });
+      }
+      
+      // Find restaurant linked to this account's email
+      const restaurant = await Restaurant.findOne({ email: account.email });
+      console.log("Restaurant Found:", restaurant);
+      
+      if (!restaurant) {
+        return res.status(404).json({ message: "No restaurant found for this account" });
+      }
+      
+      // Return the restaurant name
+      res.json({ itemId: restaurantId, name: restaurant.name });
+    } catch (err) {
+      console.error("Fetch Error:", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  //payment save 
+  router.post('/payment', async (req, res) => {
+    try {
+        const { userId,buyerName, restaurantName,restaurantEmail, amount, transactionId, status } = req.body;
+        
+        const payment = new Payment({
+            userId,
+            buyerName,
+            restaurantName,
+            restaurantEmail,
+            amount,
+            transactionId,
+            status
+        });
+        console.log(payment,"hjdhbvsjhgvbhdkjsladfgvhgjgcxcvg")
+        await payment.save();
+        
+        res.status(201).json({ success: true, message: "Payment details saved successfully", payment });
+    } catch (error) {
+        console.error("Error saving payment details:", error);
+        res.status(500).json({ success: false, message: "Failed to save payment details", error: error.message });
+    }
+});
+// GET all payment history
+router.get('/paymentsfetch', async (req, res) => {
+    try {
+        const payments = await Payment.find().populate('userId');
+        res.json(payments);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching payments", error });
+    }
+});
+router.get('/my-dabbawala-orders/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const orders = await Dabbawala.find({ userId }); // ✅ return all orders
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching orders", error });
+    }
+});
+
+router.get('/dabbawala-orders', async (req, res) => {
+    try {
+        const orders = await Dabbawala.find(); 
+        console.log("..............................................",orders);
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching orders", error });
+    }
+});
+router.put('/restaurant/menu/update-availability/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { availability } = req.body;
+      
+      // Validate the input
+      if (!id || availability === undefined || availability < 0) {
+        return res.status(400).json({ message: "Invalid input data" });
+      }
+      
+      // Find the menu item and update its availability
+      const updatedItem = await MenuItem.findByIdAndUpdate(
+        id,
+        { stockCount: availability },
+        { new: true } // Return the updated document
+      );
+      
+      if (!updatedItem) {
+        return res.status(404).json({ message: "Menu item not found" });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: "Availability updated successfully",
+        item: updatedItem
+      });
+    } catch (error) {
+      console.error("Error updating availability:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Server error while updating availability",
+        error: error.message 
+      });
+    }
+  });
+  //feedback restaurnt fetch
+  router.get('/restaurant/feedback/fetch/:email', async (req, res) => {
+    try {
+      const { email } = req.params;
+      
+      // Validate input
+      if (!email) {
+        return res.status(400).json({ message: "Restaurant email is required" });
+      }
+      
+      // Find all feedback for this restaurant
+      const feedback = await Feedback.find({ restaurantEmail: email })
+        .sort({ createdAt: -1 }) // Sort by newest first
+        .populate('userId', 'name email') // Optional: populate user details if needed
+        .exec();
+      console.log(feedback)
+      res.status(200).json(feedback);
+    } catch (error) {
+      console.error("Error fetching restaurant feedback:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Server error while fetching feedback",
+        error: error.message 
+      });
+    }
+  });
 module.exports = router;
 
 

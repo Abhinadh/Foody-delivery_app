@@ -13,7 +13,8 @@ import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
 import OrderTracking from './pages/MyOrders';
 import Dabbawala from './pages/Dabbawala'
-
+import FeedbackPage from './pages/feedbackfetch'
+import Payments from './pages/paymenthistory'
 
 
 
@@ -37,6 +38,8 @@ function App() {
         <Route path="/dabbawala" element={<Dabbawala/>} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/my-orders" element={<OrderTracking />} />
+        <Route path="/feedback" element={<FeedbackPage />} />
+        <Route path="/payments" element={<Payments/>}/>
       </Routes>
 
             {/* Login/Signup Modal (Global for all pages) */}

@@ -6,10 +6,25 @@ const paymentSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    
+    buyerName: {
+        type: String,
+        required: true
+    },
+    restaurantName: {
+        type: String,
+        required: true
+    },
+    restaurantEmail: {
+        type: String,
+        required: true
+    },
     amount: {
         type: Number,
         required: true
     },
+    
+
     transactionId: {
         type: String,
         unique: true,

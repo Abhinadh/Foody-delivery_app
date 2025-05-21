@@ -26,8 +26,9 @@
 
 .fg-close-btn {
     position: absolute;
-    top: 10px;
-    right: 15px;
+    top: 1px;
+    right: 1px;
+    color: #ff4500;
     background: none;
     border: none;
     font-size: 20px;

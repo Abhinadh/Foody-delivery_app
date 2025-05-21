@@ -16,8 +16,7 @@ const DescriptionModal = ({ item, onClose }) => {
     const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
     const [buyerName, setBuyerName] = useState("");
     const [restaurantEmail, setRestaurantEmail] = useState("");
-
-
+    const [showLoginMessage, setShowLoginMessage] = useState(false);
 
     useEffect(() => {
         if (item && item._id) {
@@ -31,10 +30,6 @@ const DescriptionModal = ({ item, onClose }) => {
                 .catch(err => console.error(err));
         }
     }, [item]);
-
-   
-
-    
 
     useEffect(() => {
         if (user?.email) {
@@ -60,8 +55,6 @@ const DescriptionModal = ({ item, onClose }) => {
         }
     };
 
-   
-
     const renderStars = (rating) => {
         const fullStars = Math.floor(rating);
         const halfStar = rating % 1 >= 0.5;
@@ -73,11 +66,20 @@ const DescriptionModal = ({ item, onClose }) => {
         );
     };
 
-    const addToCart = () => {
+    const handleBuyNow = () => {
         if (!user || !user.id) {
-            alert("User ID is missing.");
+            setShowLoginMessage(true);
             return;
         }
+        setIsOrderModalOpen(true);
+    };
+
+    const addToCart = () => {
+        if (!user || !user.id) {
+            setShowLoginMessage(true);
+            return;
+        }
+
         if (!food || !food._id) {
             alert("Food ID is missing.");
             return;
@@ -92,7 +94,16 @@ const DescriptionModal = ({ item, onClose }) => {
         .catch(err => console.error(err));
     };
 
-    
+    useEffect(() => {
+        if (showLoginMessage) {
+            // Auto-hide the message after 4 seconds
+            const timer = setTimeout(() => {
+                setShowLoginMessage(false);
+            }, 4000);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [showLoginMessage]);
 
     if (!food) return <p className="lmn-loading">Loading...</p>;
 
@@ -101,9 +112,32 @@ const DescriptionModal = ({ item, onClose }) => {
             <div className="stu-modal-content">
                 <button className="vwx-close-btn" onClick={onClose}>×</button>
     
-                {isOrderModalOpen ? (
+                {showLoginMessage ? (
+                    <div className="login-message-container">
+                        <div className="login-message">
+                            <div className="login-doodle">
+                                <div className="doodle-character">
+                                    <div className="doodle-face">
+                                        <div className="doodle-eyes">
+                                            <div className="doodle-eye"></div>
+                                            <div className="doodle-eye"></div>
+                                        </div>
+                                        <div className="doodle-mouth"></div>
+                                    </div>
+                                    <div className="doodle-body">
+                                        <div className="doodle-lock"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3>Please Login First</h3>
+                            <p className="login-message-text">You need to be logged in to purchase or add items to your cart!</p>
+                            <div className="login-line-animation"></div>
+                        </div>
+                    </div>
+                ) : isOrderModalOpen ? (
                     <OrderModal
                         itemId={food._id}
+                        quantities={food.stockCount}
                         name={food.name}
                         restaurantName={restaurantName}
                         restaurantEmail={restaurantEmail}
@@ -121,7 +155,7 @@ const DescriptionModal = ({ item, onClose }) => {
                             <p><strong>Price:</strong> ₹{food.price}</p>
                             <p><strong>Restaurant:</strong> {restaurantName}</p>
                             <p><strong>Description:</strong> {food.description || "No description available."}</p>
-                            <button className="mno-buy-btn" onClick={() => setIsOrderModalOpen(true)}>Buy Now</button>
+                            <button className="mno-buy-btn" onClick={handleBuyNow}>Buy Now</button>
                             <button className="mno-add-btn" onClick={addToCart}>
                                 <IoMdAddCircleOutline style={{ marginRight: "5px", verticalAlign: "middle", fontSize: "1.2em" }}/> Add
                             </button>
@@ -131,6 +165,6 @@ const DescriptionModal = ({ item, onClose }) => {
             </div>
         </div>
     );
-}    
+}
 
 export default DescriptionModal;

@@ -4,8 +4,9 @@ import "../styles/Homepage.css";
 import { useUser } from "../context/UserContext";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import DescriptionModal from "./Description";
+import RestaurantModal from "./RestaurantModel"; // Import the new component
 import { useSearch } from "../context/SearchContext";
-//AIzaSyCPfWpbibiw83RQsxELttr0vL9Ic64Sf9s
+
 const foodCategories = [
     { name: "Pizza", icon: "🍕" },
     { name: "Burger", icon: "🍔" },
@@ -24,10 +25,11 @@ const Home = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [allMenuItems, setAllMenuItems] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
-    // const [searchQuery, setSearchQuery] = useState("");
-     const [foods, setFoods] = useState([]);
+    const [foods, setFoods] = useState([]);
+    const [restaurantNames, setRestaurantNames] = useState({});//restname
 
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+    const [restaurantDetails, setRestaurantDetails] = useState(null); // Add this state for restaurant modal
     const [filters, setFilters] = useState({
         ratingAbove3: false,
         ratingAbove4: false,
@@ -42,7 +44,35 @@ const Home = () => {
     const [restaurants, setRestaurants] = useState([]);
     const [allRestaurants, setAllRestaurants] = useState([]);
     const { searchQuery } = useSearch(); 
-
+    
+    //restname
+    useEffect(() => {
+        const fetchRestaurantNames = async () => {
+            const namePromises = menuItems.map(async (item) => {
+                try {
+                    const response = await axios.get(`http://localhost:5000/api/auth/menu-items/restaurant/name/${item.restaurantId}`);
+                    return { itemId: item._id, name: response.data.name };
+                } catch (error) {
+                    console.error('Error fetching restaurant name:', error);
+                    return { itemId: item._id, name: 'Unknown Restaurant' };
+                }
+            });
+            
+            const results = await Promise.all(namePromises);
+            
+            // Convert array of results to an object with item IDs as keys
+            const namesMap = {};
+            results.forEach(result => {
+                namesMap[result.itemId] = result.name;
+            });
+            
+            setRestaurantNames(namesMap);
+        };
+    
+        if (menuItems.length > 0) {
+            fetchRestaurantNames();
+        }
+    }, [menuItems]);
 
     useEffect(() => {
         axios.get("http://localhost:5000/api/auth/menu-items")
@@ -62,7 +92,7 @@ const Home = () => {
             })
             .catch(err => console.error(err));
     }, []);
-    //search resturant 
+    
     useEffect(() => {
         if (selectedRestaurant) {
             setMenuItems(allMenuItems.filter(item => item.restaurantId === selectedRestaurant._id));
@@ -70,10 +100,7 @@ const Home = () => {
             setMenuItems(allMenuItems);
         }
     }, [selectedRestaurant, allMenuItems]);
-
     
-    
-
     useEffect(() => {
         let filteredItems = allMenuItems;
 
@@ -120,7 +147,6 @@ const Home = () => {
         setMenuItems(filteredItems);
     }, [selectedCategory, searchQuery, allMenuItems, filters]);
 
-    // Add new useEffect for restaurant search
     useEffect(() => {
         if (searchQuery) {
             const filteredRestaurants = allRestaurants.filter(restaurant =>
@@ -140,8 +166,6 @@ const Home = () => {
         }));
     };
 
-
-
     const renderStars = (rating) => {
         const fullStars = Math.floor(rating);
         const halfStar = rating % 1 >= 0.5;
@@ -159,7 +183,6 @@ const Home = () => {
         const fullStars = Math.floor(rating);
         const halfStar = rating % 1 >= 0.5;
         return (
-            
             <div className="star-rating">
                 {[...Array(fullStars)].map((_, i) => (
                     <FaStar key={`full-${i}`} color="gold" />
@@ -194,9 +217,22 @@ const Home = () => {
         return () => clearInterval(interval);
     }, []);
 
+    // Function to fetch restaurant details when clicked
+    const handleRestaurantClick = async (restaurant) => {
+        try {
+            // Set the restaurant immediately to show the modal faster
+            setRestaurantDetails(restaurant);
+            
+            // Then fetch additional details if needed
+            const response = await axios.get(`http://localhost:5000/api/auth/restaurants/name/${restaurant._id}`);
+            setRestaurantDetails(response.data);
+            setSelectedRestaurant(response.data);
+        } catch (error) {
+            console.error("Error fetching restaurant details:", error);
+        }
+    };
 
     return (
-        
         <div className="home-container-kjmn">
             <div className="scroll-container-kjmn">
                 <div className="scroll-wrapper-kjmn">
@@ -254,19 +290,19 @@ const Home = () => {
                     Price ₹300 - ₹400
                 </button>
 
-                <button 
+                {/* <button 
                     className={`filter-btn ${filters.vegetarian ? "active" : ""}`} 
                     onClick={() => handleFilterChange("vegetarian")}
                 >
                     Vegetarian
-                </button>
+                </button> */}
 
-                <button 
+                {/* <button 
                     className={`filter-btn ${filters.nonVegetarian ? "active" : ""}`} 
                     onClick={() => handleFilterChange("nonVegetarian")}
                 >
                     Non-Vegetarian
-                </button>
+                </button> */}
             </div>
 
             <div className="menu-scroll-container">
@@ -279,6 +315,36 @@ const Home = () => {
                                 <div className="menu-info-kjmn">
                                     <div className="menu-title">
                                         <h3>{item.name}</h3>
+                                        <div style={{
+    border: "2px solid #ddd",
+    padding: "12px 20px",
+    borderRadius: "12px",
+    backgroundColor: "#f5f5f5",
+    display: "inline-block",
+    textAlign: "center",
+    width: "200px",  // Increased width to make it stretch a little
+    boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.1)",
+    transition: "0.3s",
+    fontFamily: "Arial, sans-serif"
+}}>
+                                        <label style={{ 
+        color: "#777", 
+        fontSize: "12px", 
+        fontWeight: "bold", 
+        display: "block",
+        opacity: "0.7"  // Makes the label dimmer
+    }}>
+        Restaurant
+    </label>
+    <h4 style={{ 
+        color: "#333", 
+        fontSize: "14px", 
+        margin: "5px 0",
+        fontWeight: "500" 
+    }}>
+        {restaurantNames[item._id]}
+    </h4>
+    </div>
                                         <div className="rating-container">
                                             {renderStars(item.rating)}
                                             <button className="buy-now-btn" onClick={() => handleBuyNow(item)}>
@@ -289,6 +355,7 @@ const Home = () => {
                                     <p className="menu-desc-kjmn">{item.description || "No description available."}</p>
                                     <p className="menu-price-kjmn" style={{ color: "green", fontWeight: "bold" }}>₹{item.price} </p>
                                 </div>
+                                
                             </div>
                         ))
                     ) : (
@@ -298,26 +365,38 @@ const Home = () => {
                 <button className="scroll-btn right" onClick={scrollRight}>&gt;</button>
             </div>
             <div className="best-restaurants-container">
-    <h2>Best Restaurants 🍽️</h2>
-    <div className="restaurant-list">
-        {restaurants.length > 0 ? (
-            restaurants.map(restaurant => (
-                <div key={restaurant._id} className="restaurant-box">
-                    <h3>{restaurant.name}</h3>
-                    <div className="rating-container">
-                        {renderResStars(restaurant.rating)}
-                        <span>({restaurant.rating})</span>
-                    </div>
+                <h2>Best Restaurants 🍽️</h2>
+                <div className="restaurant-list">
+                    {restaurants.length > 0 ? (
+                        restaurants.map(restaurant => (
+                            <div 
+                                key={restaurant._id} 
+                                className="restaurant-box"
+                                onClick={() => handleRestaurantClick(restaurant)}
+                            >
+                                <h3>{restaurant.name}</h3>
+                                <div className="rating-container">
+                                    {renderResStars(restaurant.rating)}
+                                    <span>({restaurant.rating})</span>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No approved restaurants available</p>
+                    )}
                 </div>
-            ))
-        ) : (
-            <p>No approved restaurants available</p>
-        )}
-    </div>
-</div>
+            </div>
 
             {selectedItem && (
                 <DescriptionModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+            )}
+            
+            {/* Restaurant Modal */}
+            {restaurantDetails && (
+                <RestaurantModal 
+                    restaurant={restaurantDetails} 
+                    onClose={() => setRestaurantDetails(null)} 
+                />
             )}
         </div>
     );

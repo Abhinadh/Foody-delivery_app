@@ -27,7 +27,7 @@ const calculateDistance = async (origin, destination) => {
 
         const timeInMinutes = element.duration.text; // Convert seconds to minutes
 
-        return timeInMinutes;
+        return timeInMinutes-25;
     } catch (error) {
         console.error("Error calculating distance:", error.message);
         return 30; // Default fallback

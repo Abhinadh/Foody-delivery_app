@@ -8,8 +8,12 @@ import "../styles/OrderModal.css";
 const GOOGLE_MAPS_API_KEY = "AIzaSyDfnv9HFPrIMlVBMoFSl6LSBQj5G3rbOJo";
 const RAZORPAY_KEY = "rzp_test_QK253G04y7gzR4"; // Replace with your Razorpay Key
 
-const OrderModal = ({ itemId, name, restaurantName, restaurantEmail, buyerName, userId, price, onClose }) => {
+const OrderModal = ({ itemId, quantities, name, restaurantName, restaurantEmail, buyerName, userId, price, onClose }) => {
+    // Convert quantities to a number if it's a string
+    const availableQuantity = parseInt(quantities, 10);
+    
     const [quantity, setQuantity] = useState(1);
+    const [remainingQuantity, setRemainingQuantity] = useState(availableQuantity);
     const [location, setLocation] = useState("");
     const [mapCenter, setMapCenter] = useState({ lat: 20.5937, lng: 78.9629 });
     const [selectedLocation, setSelectedLocation] = useState(null);
@@ -21,6 +25,11 @@ const OrderModal = ({ itemId, name, restaurantName, restaurantEmail, buyerName, 
             setIsGoogleLoaded(true);
         }
     }, []);
+
+    useEffect(() => {
+        // Update remaining quantity whenever quantity changes
+        setRemainingQuantity(availableQuantity - quantity);
+    }, [quantity, availableQuantity]);
 
     const getCurrentLocation = () => {
         if (navigator.geolocation) {
@@ -69,7 +78,21 @@ const OrderModal = ({ itemId, name, restaurantName, restaurantEmail, buyerName, 
     };
 
     const updateQuantity = (change) => {
-        setQuantity((prevQuantity) => Math.max(1, prevQuantity + change));
+        const newQuantity = quantity + change;
+        // Check if new quantity is valid
+        if (newQuantity < 1) {
+            return; // Don't allow below 1
+        }
+        // Check if new quantity exceeds available stock
+        if (newQuantity > availableQuantity) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Not enough stock',
+                text: `Only ${availableQuantity} items available!`,
+            });
+            return;
+        }
+        setQuantity(newQuantity);
     };
 
     const placeOrder = () => {
@@ -81,6 +104,7 @@ const OrderModal = ({ itemId, name, restaurantName, restaurantEmail, buyerName, 
             restaurantName,
             restaurantEmail,
             location,
+            selectedLocation,
             buyerName
         })
         .then(() => {
@@ -88,6 +112,25 @@ const OrderModal = ({ itemId, name, restaurantName, restaurantEmail, buyerName, 
             onClose();
         })
         .catch(err => console.error(err));
+    };
+
+    // Save payment details to the database
+    const savePaymentDetails = (transactionId, amount) => {
+        axios.post("http://localhost:5000/api/auth/payment", {
+            userId,
+            buyerName,
+            restaurantName,
+            restaurantEmail,
+            amount,
+            transactionId,
+            status: 'Success'
+        })
+        .then(response => {
+            console.log("Payment details saved successfully:", response.data);
+        })
+        .catch(error => {
+            console.error("Error saving payment details:", error);
+        });
     };
 
     // Load Razorpay script dynamically
@@ -102,6 +145,25 @@ const OrderModal = ({ itemId, name, restaurantName, restaurantEmail, buyerName, 
     };
 
     const handlePayment = async () => {
+        // Double check quantity before payment
+        if (quantity > availableQuantity) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Not enough stock',
+                text: `Only ${availableQuantity} items available!`,
+            });
+            return;
+        }
+
+        if (!location || location.trim() === "") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Location Required',
+                text: 'Please enter your delivery location',
+            });
+            return;
+        }
+
         const isLoaded = await loadRazorpayScript();
         if (!isLoaded) {
             Swal.fire("Error", "Razorpay SDK failed to load. Check your internet connection.", "error");
@@ -116,6 +178,12 @@ const OrderModal = ({ itemId, name, restaurantName, restaurantEmail, buyerName, 
             description: `Payment for ${name}`,
             image: "https://yourlogo.com/logo.png", // Replace with your logo
             handler: function (response) {
+                // Capture the payment ID from Razorpay response
+                const transactionId = response.razorpay_payment_id;
+                
+                // Store payment details in database
+                savePaymentDetails(transactionId, price * quantity);
+                
                 Swal.fire("Payment Successful!", "Your order is being processed.", "success");
                 placeOrder(); // Place order after successful payment
             },
@@ -142,12 +210,23 @@ const OrderModal = ({ itemId, name, restaurantName, restaurantEmail, buyerName, 
                     <p className="jk-info"><strong>Item:</strong> {name}</p>
                     <p className="jk-info"><strong>Restaurant:</strong> {restaurantName}</p>
                     <p className="jk-info"><strong>Buyer Name:</strong> {buyerName}</p>
-
+                    <p className="jk-info">
+                        <strong>Availability:</strong> 
+                        <span className={remainingQuantity < 5 ? "low-stock" : ""}>
+                            {remainingQuantity} left
+                        </span>
+                    </p>
                     <label className="mn-label">Quantity:</label>
                     <div className="quantity-control">
                         <button className="quantity-btn" onClick={() => updateQuantity(-1)}><Minus size={16} /></button>
                         <span className="quantity-value">{quantity}</span>
-                        <button className="quantity-btn" onClick={() => updateQuantity(1)}><Plus size={16} /></button>
+                        <button 
+                            className="quantity-btn" 
+                            onClick={() => updateQuantity(1)}
+                            disabled={quantity >= availableQuantity}
+                        >
+                            <Plus size={16} />
+                        </button>
                     </div>
 
                     <label className="op-label">Location:</label>
