@@ -28,7 +28,7 @@ const Home = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [foods, setFoods] = useState([]);
     const [restaurantNames, setRestaurantNames] = useState({});//restname
-    const URI =process.env.BACKEND_URI
+    const URL =process.env.BACKEND_URI
 
 
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
@@ -228,7 +228,7 @@ const Home = () => {
             setRestaurantDetails(restaurant);
             
             // Then fetch additional details if needed
-            const response = await axios.get(`${URI}/api/auth/restaurants/name/${restaurant._id}`);
+            const response = await axios.get(`${URL}/api/auth/restaurants/name/${restaurant._id}`);
             setRestaurantDetails(response.data);
             setSelectedRestaurant(response.data);
         } catch (error) {
@@ -315,7 +315,7 @@ const Home = () => {
                     {menuItems.length > 0 ? (
                         menuItems.map(item => (
                             <div key={item._id} className="menu-card-kjmn">
-                                <img className="menu-image-kjmn" src={`${URI}/api/auth/restaurant/menu/image/${item._id}`} alt={item.name} />
+                                <img className="menu-image-kjmn" src={`${URL}/api/auth/restaurant/menu/image/${item._id}`} alt={item.name} />
                                 <div className="menu-info-kjmn">
                                     <div className="menu-title">
                                         <h3>{item.name}</h3>
