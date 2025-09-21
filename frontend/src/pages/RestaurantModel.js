@@ -20,7 +20,7 @@ const RestaurantModal = ({ restaurant, onClose }) => {
   const fetchMenuItems = async (identifier) => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:5000/api/auth/menu-items/restaurant/${identifier}`);
+      const response = await axios.get(`${BACKEND_URI}/api/auth/menu-items/restaurant/${identifier}`);
       console.log("API response:", response);
       
       // Handle the specific response format where data is in menuItems property
@@ -87,7 +87,7 @@ const RestaurantModal = ({ restaurant, onClose }) => {
               {menuItems.map((item, index) => (
                 <div key={item._id || index} className="restaurant-menu-item">
                   <img 
-                    src={`http://localhost:5000/api/auth/restaurant/menu/image/${item._id}`}
+                    src={`${BACKEND_URI}/api/auth/restaurant/menu/image/${item._id}`}
                     alt={item.name}
                     className="restaurant-menu-image"
                     onError={(e) => {

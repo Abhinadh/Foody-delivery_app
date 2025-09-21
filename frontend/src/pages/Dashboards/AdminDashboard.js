@@ -13,7 +13,7 @@ export default function AdminDashboard() {
 
     const fetchRestaurants = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/admin/restaurants");
+            const res = await axios.get(`${BACKEND_URI}/api/admin/restaurants`);
             setRestaurants(res.data);
         } catch (error) {
             console.error("Error fetching restaurants:", error);
@@ -22,7 +22,7 @@ export default function AdminDashboard() {
 
     const fetchDeliveryBoys = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/admin/deliveryboys");
+            const res = await axios.get(`${BACKEND_URI}/api/admin/deliveryboys`);
             setDeliveryBoys(res.data);
         } catch (error) {
             console.error("Error fetching delivery boys:", error);
@@ -32,8 +32,8 @@ export default function AdminDashboard() {
     const handleDelete = async (id, role) => {
         try {
             const url = role === "restaurant"
-                ? `http://localhost:5000/api/admin/delete/restaurant/${id}`
-                : `http://localhost:5000/api/admin/delete/deliveryboy/${id}`;
+                ? `${BACKEND_URI}/api/admin/delete/restaurant/${id}`
+                : `${BACKEND_URI}/api/admin/delete/deliveryboy/${id}`;
 
             await axios.delete(url);
             alert(`${role} deleted successfully`);

@@ -4,7 +4,7 @@ const FeedbackPage = () => {
     const [feedback, setFeedback] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/auth/feedback/fetch") // Adjust URL as needed
+        fetch(`${BACKEND_URI}/api/auth/feedback/fetch`) // Adjust URL as needed
             .then(response => response.json())
             .then(data => setFeedback(data))
             .catch(error => console.error("Error fetching feedback:", error));

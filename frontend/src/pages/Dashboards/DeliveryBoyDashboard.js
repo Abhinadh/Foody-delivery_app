@@ -17,7 +17,7 @@ const DeliveryBoyDashboard = () => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/auth/delivery-boy/${user.email}`);
+                const response = await fetch(`${BACKEND_URI}/api/auth/delivery-boy/${user.email}`);
                 const data = await response.json();
                 setDeliveryBoy(data);
             } catch (error) {
@@ -27,7 +27,7 @@ const DeliveryBoyDashboard = () => {
 
         const fetchDabbawalaRequests = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/auth/dabbawalaRequests/${user.email}`);
+                const response = await fetch(`${BACKEND_URI}/api/auth/dabbawalaRequests/${user.email}`);
                 const data = await response.json();
                 
                 if (Array.isArray(data)) {
@@ -56,7 +56,7 @@ const DeliveryBoyDashboard = () => {
 
     const handleAvailabilityToggle = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/auth/delivery-boy/availability/${user.email}`, {
+            const response = await fetch(`${BACKEND_URI}/api/auth/delivery-boy/availability/${user.email}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ available: !deliveryBoy.available }),
@@ -70,7 +70,7 @@ const DeliveryBoyDashboard = () => {
 
     const handleOrderStatusChange = async (orderId, status) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/auth/order/status/${orderId}`, {
+            const response = await fetch(`${BACKEND_URI}/api/auth/order/status/${orderId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status }),
@@ -124,7 +124,7 @@ const DeliveryBoyDashboard = () => {
     }
     const handledabbastatusChange = async (orderId, status) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/auth/dabba/status/${orderId}`, {
+            const response = await fetch(`${BACKEND_URI}/api/auth/dabba/status/${orderId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status }),

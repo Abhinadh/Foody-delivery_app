@@ -39,7 +39,7 @@ const Cart = () => {
     // Fetch user profile information
     useEffect(() => {
         if (user?.email) {
-            axios.get(`http://localhost:5000/api/auth/user/profile?email=${user.email}`)
+            axios.get(`${process.env.BACKEND_URI}/api/auth/user/profile?email=${user.email}`)
                 .then(response => {
                     setBuyerName(response.data.name);
                 })
@@ -66,7 +66,7 @@ const Cart = () => {
             
             for (const restaurantId of restaurantIds) {
                 try {
-                    const response = await axios.get(`http://localhost:5000/api/auth/admin/restaurants/name/${restaurantId}`);
+                    const response = await axios.get(`${BACKEND_URI}/api/auth/admin/restaurants/name/${restaurantId}`);
                     infoMap[restaurantId] = {
                         name: response.data.name || "Unknown",
                         email: response.data.email || "Unknown"
@@ -90,7 +90,7 @@ const Cart = () => {
 
     const fetchCartItems = async () => {
         try {
-            const { data } = await axios.get(`http://localhost:5000/api/auth/cart/${user.id}`);
+            const { data } = await axios.get(`${BACKEND_URI}/api/auth/cart/${user.id}`);
             console.log("Cart Data from Backend:", data);
             setCartItems(data);
         } catch (error) {
@@ -100,7 +100,7 @@ const Cart = () => {
 
     const removeItem = async (cartId) => {
         try {
-            await axios.delete(`http://localhost:5000/api/auth/cart/remove/${cartId}`);
+            await axios.delete(`${BACKEND_URI}/api/auth/cart/remove/${cartId}`);
             setCartItems(cartItems.filter(item => item._id !== cartId));
         } catch (error) {
             console.error("Error removing item:", error);
@@ -111,7 +111,7 @@ const Cart = () => {
         if (newQuantity < 1) return;
 
         try {
-            await axios.put(`http://localhost:5000/api/auth/cart/update/${cartId}`, { quantity: newQuantity });
+            await axios.put(`${BACKEND_URI}/api/auth/cart/update/${cartId}`, { quantity: newQuantity });
             setCartItems(cartItems.map(item => 
                 item._id === cartId ? { ...item, quantity: newQuantity } : item
             ));
@@ -265,13 +265,13 @@ const Cart = () => {
                 }
     
                 // Place the order
-                return axios.post("http://localhost:5000/api/auth/place", orderData);
+                return axios.post(`${BACKEND_URI}/api/auth/place`, orderData);
             });
     
             const results = await Promise.all(orderPromises);
             console.log("All orders placed successfully:", results);
             
-            await axios.delete(`http://localhost:5000/api/auth/cart/clear/${user.id}`);
+            await axios.delete(`${BACKEND_URI}/api/auth/cart/clear/${user.id}`);
             
             Swal.fire("Success!", "All orders placed successfully!", "success");
             setCartItems([]);
@@ -315,7 +315,7 @@ const Cart = () => {
                 ) : (
                     cartItems.map((cartItem) => (
                         <div key={cartItem._id} className="vwcrz-cart-item">
-                            <img src={`http://localhost:5000/api/auth/restaurant/menu/image/${cartItem.item._id}`} 
+                            <img src={`${BACKEND_URI}/api/auth/restaurant/menu/image/${cartItem.item._id}`} 
                                 alt={cartItem.item.name} className="vwcrz-item-image" />
                             <div className="vwcrz-item-details">
                                 <h3>{cartItem.item.name}</h3>

@@ -20,7 +20,7 @@ const DescriptionModal = ({ item, onClose }) => {
 
     useEffect(() => {
         if (item && item._id) {
-            axios.get(`http://localhost:5000/api/auth/menu-items/${item._id}`)
+            axios.get(`${BACKEND_URI}/api/auth/menu-items/${item._id}`)
                 .then(res => {
                     setFood(res.data);
                     if (res.data.restaurantId) {
@@ -33,7 +33,7 @@ const DescriptionModal = ({ item, onClose }) => {
 
     useEffect(() => {
         if (user?.email) {
-            axios.get(`http://localhost:5000/api/auth/user/profile?email=${user.email}`)
+            axios.get(`${BACKEND_URI}/api/auth/user/profile?email=${user.email}`)
                 .then(response => {
                     setBuyerName(response.data.name);
                 })
@@ -45,7 +45,7 @@ const DescriptionModal = ({ item, onClose }) => {
 
     const fetchRestaurantName = async (restaurantId) => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/auth/admin/restaurants/name/${restaurantId}`);
+            const response = await axios.get(`${BACKEND_URI}/api/auth/admin/restaurants/name/${restaurantId}`);
             setRestaurantName(response.data.name || "Unknown");
             setRestaurantEmail(response.data.email || "Unknown");
             console.log(response.data.email)
@@ -85,7 +85,7 @@ const DescriptionModal = ({ item, onClose }) => {
             return;
         }
 
-        axios.post("http://localhost:5000/api/auth/cart/add", {
+        axios.post(`${BACKEND_URI}/api/auth/cart/add`, {
             userId: user.id,
             itemId: food._id,
             quantity: 1
@@ -148,7 +148,7 @@ const DescriptionModal = ({ item, onClose }) => {
                     />
                 ) : (
                     <>
-                        <img className="def-img" src={`http://localhost:5000/api/auth/restaurant/menu/image/${food._id}`} alt={food.name} />
+                        <img className="def-img" src={`${BACKEND_URI}/api/auth/restaurant/menu/image/${food._id}`} alt={food.name} />
                         <div className="ghi-details">
                             <h2>{food.name}</h2>
                             <div className="jkl-stars">{renderStars(food.rating)}</div>

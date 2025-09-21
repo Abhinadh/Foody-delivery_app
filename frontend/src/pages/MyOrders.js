@@ -155,7 +155,7 @@ const OrderTracking = () => {
     const fetchOrders = () => {
         if (user) {
             setLoading(true);
-            axios.get(`http://localhost:5000/api/auth/my-orders/${user.id}`)
+            axios.get(`${BACKEND_URI}/api/auth/my-orders/${user.id}`)
                 .then(res => {
                     const updatedOrders = res.data.map(order => ({
                         ...order,
@@ -176,7 +176,7 @@ const OrderTracking = () => {
     const fetchDabbawalaOrders = () => {
         if (user) {
             setLoadingDabbawala(true);
-            axios.get(`http://localhost:5000/api/auth/my-dabbawala-orders/${user.id}`)
+            axios.get(`${BACKEND_URI}/api/auth/my-dabbawala-orders/${user.id}`)
                 .then(res => {
                     setDabbawalaOrders(res.data);
                     
@@ -231,7 +231,7 @@ const OrderTracking = () => {
             const quantity = orderDetails.quantity || 1;
             const totalAmount = (price * quantity).toFixed(2);
             
-            await axios.post('http://localhost:5000/api/auth/order/send-cancel-email', {
+            await axios.post(`${BACKEND_URI}/api/auth/order/send-cancel-email`, {
                 to: user.email,
                 subject: `Order Cancellation Confirmation - #${orderDetails._id.substring(orderDetails._id.length - 6)}`,
                 orderDetails: {
@@ -260,7 +260,7 @@ const OrderTracking = () => {
             setCancellingOrderId(null);
             setShowCancelConfirm(false);
             
-            await axios.delete(`http://localhost:5000/api/auth/cancel-order/${cancelLoadingId}`);
+            await axios.delete(`${BACKEND_URI}/api/auth/cancel-order/${cancelLoadingId}`);
             await sendCancellationEmail(cancelLoadingId);
             
             setOrders(prevOrders => prevOrders.filter(order => order._id !== cancelLoadingId));
@@ -281,7 +281,7 @@ const OrderTracking = () => {
         setLoadingItems(prev => ({ ...prev, [itemId]: true }));
         
         try {
-            const response = await axios.get(`http://localhost:5000/api/auth/menu-items/${itemId}`);
+            const response = await axios.get(`${BACKEND_URI}/api/auth/menu-items/${itemId}`);
             setItemDetails(prev => ({ ...prev, [itemId]: response.data }));
         } catch (error) {
             console.error("Failed to fetch item details:", error);
@@ -855,7 +855,7 @@ const OrderTracking = () => {
                                                                     {item.image ? (
                                                                         <img 
                                                                             className="w-100 h-100 object-fit-cover" 
-                                                                            src={`http://localhost:5000/api/auth/restaurant/menu/image/${item._id}`} 
+                                                                            src={`${BACKEND_URI}/api/auth/restaurant/menu/image/${item._id}`} 
                                                                             alt={item.name} 
                                                                         />
                                                                     ) : (

@@ -32,7 +32,7 @@ const Navbar = ({ setShowModal, setModalType }) => {
 
     useEffect(() => {
         if (user?.email) {
-            axios.get(`http://localhost:5000/api/auth/user/profile?email=${user.email}`)
+            axios.get(`${BACKEND_URI}/api/auth/user/profile?email=${user.email}`)
                 .then(response => {
                     setUserName(response.data.name);
                     setUserRole(response.data.role);

@@ -21,7 +21,7 @@ export default function AdminDashboard() {
 
     const fetchRestaurants = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/auth/admin/restaurants");
+            const res = await axios.get("${BACKEND_URI}/api/auth/admin/restaurants");
             setRestaurants(res.data);
         } catch (error) {
             console.error("Error fetching restaurants:", error);
@@ -30,7 +30,7 @@ export default function AdminDashboard() {
 
     const fetchDeliveryBoys = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/auth/admin/deliveryboys");
+            const res = await axios.get(`${BACKEND_URI}/api/auth/admin/deliveryboys`);
             setDeliveryBoys(res.data);
         } catch (error) {
             console.error("Error fetching delivery boys:", error);
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
 
     const fetchDabbawalas = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/auth/dabbawala-orders");
+            const res = await axios.get(`${BACKEND_URI}/api/auth/dabbawala-orders`);
             setDabbawalas(res.data);
             console.log(res.data);
         } catch (error) {
@@ -50,8 +50,8 @@ export default function AdminDashboard() {
     const handleDelete = async (id, role) => {
         try {
             const url = role === "restaurant"
-                ? `http://localhost:5000/api/auth/admin/delete/restaurant/${id}`
-                : `http://localhost:5000/api/auth/admin/delete/deliveryboy/${id}`;
+                ? `${BACKEND_URI}/api/auth/admin/delete/restaurant/${id}`
+                : `${BACKEND_URI}/api/auth/admin/delete/deliveryboy/${id}`;
 
             await axios.delete(url);
             
@@ -66,9 +66,9 @@ export default function AdminDashboard() {
 
     const handleApprove = async (id, email) => {
         try {
-            await axios.post(`http://localhost:5000/api/auth/admin/approve/restaurant/${id}`);
+            await axios.post(`${BACKEND_URI}/api/auth/admin/approve/restaurant/${id}`);
             
-            await axios.post(`http://localhost:5000/api/auth/admin/send-approval-email`, { email });
+            await axios.post(`${BACKEND_URI}/api/auth/admin/send-approval-email`, { email });
             
             showToast("Restaurant approved successfully");
             fetchRestaurants();
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
 
     const handleReject = async (id) => {
         try {
-            await axios.post(`http://localhost:5000/api/auth/admin/reject/restaurant/${id}`);
+            await axios.post(`${BACKEND_URI}/api/auth/admin/reject/restaurant/${id}`);
             showToast("Restaurant rejected successfully");
             fetchRestaurants();
         } catch (error) {

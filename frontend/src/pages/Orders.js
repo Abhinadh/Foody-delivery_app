@@ -17,7 +17,7 @@ export default function Orders() {
     const fetchOrders = async () => {
         try {
             console.log(user.id);
-            const res = await axios.get(`http://localhost:5000/api/auth/orders/${user.id}`);
+            const res = await axios.get(`${BACKEND_URI}/api/auth/orders/${user.id}`);
             console.log(res.data);
             setOrders(res.data);
         } catch (error) {
@@ -27,7 +27,7 @@ export default function Orders() {
 
     const updateStatus = async (orderId, newStatus) => {
         try {
-            await axios.put(`http://localhost:5000/api/auth/orders/update-status/${orderId}`, { status: newStatus });
+            await axios.put(`${BACKEND_URI}/api/auth/orders/update-status/${orderId}`, { status: newStatus });
             fetchOrders();
         } catch (error) {
             console.error("Error updating status:", error);

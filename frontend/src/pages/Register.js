@@ -37,7 +37,7 @@ export default function Register() {
     console.log("Sending Data:", formData);
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", formData);
+      await axios.post(`${BACKEND_URI}/api/auth/register`, formData);
       alert(`${type} registered successfully`);
       navigate("/login");
     } catch (err) {

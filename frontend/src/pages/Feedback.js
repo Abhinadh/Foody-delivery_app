@@ -9,7 +9,7 @@ const FeedbackForm = ({ itemId,orderId, restaurantEmail, userId, onClose }) => {
     const submitFeedback = async () => {
         try {
             console.log(restaurantEmail);
-            await axios.post("http://localhost:5000/api/auth/feedback/add", {
+            await axios.post(`${BACKEND_URI}/api/auth/feedback/add`, {
                 itemId,
                 restaurantEmail,
                 userId,

@@ -15,7 +15,7 @@ const PaymentHistoryPage = () => {
 
     useEffect(() => {
         setLoading(true);
-        axios.get('http://localhost:5000/api/auth/paymentsfetch')
+        axios.get(`http://localhost:5000/api/auth/paymentsfetch`)
             .then(res => {
                 setPayments(res.data);
                 setLoading(false);

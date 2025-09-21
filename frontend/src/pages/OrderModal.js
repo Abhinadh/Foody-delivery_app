@@ -96,7 +96,7 @@ const OrderModal = ({ itemId, quantities, name, restaurantName, restaurantEmail,
     };
 
     const placeOrder = () => {
-        axios.post("http://localhost:5000/api/auth/place", {
+        axios.post(`${BACKEND_URI}/api/auth/place`, {
             userId,
             itemId,
             quantity,
@@ -116,7 +116,7 @@ const OrderModal = ({ itemId, quantities, name, restaurantName, restaurantEmail,
 
     // Save payment details to the database
     const savePaymentDetails = (transactionId, amount) => {
-        axios.post("http://localhost:5000/api/auth/payment", {
+        axios.post(`${BACKEND_URI}/api/auth/payment`, {
             userId,
             buyerName,
             restaurantName,
