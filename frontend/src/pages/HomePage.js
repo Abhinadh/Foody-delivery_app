@@ -53,7 +53,7 @@ const Home = () => {
         const fetchRestaurantNames = async () => {
             const namePromises = menuItems.map(async (item) => {
                 try {
-                    const response = await axios.get(`URI/api/auth/menu-items/restaurant/name/${item.restaurantId}`);
+                    const response = await axios.get(`${URL}/api/auth/menu-items/restaurant/name/${item.restaurantId}`);
                     return { itemId: item._id, name: response.data.name };
                 } catch (error) {
                     console.error('Error fetching restaurant name:', error);
@@ -78,7 +78,7 @@ const Home = () => {
     }, [menuItems]);
 
     useEffect(() => {
-        axios.get("URI/api/auth/menu-items")
+        axios.get(`${URL}/api/auth/menu-items`)
             .then(res => {
                 setAllMenuItems(res.data);
                 setMenuItems(res.data);
@@ -87,7 +87,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        axios.get("URI/api/auth/admin/restaurants")
+        axios.get(`${URL}/api/auth/admin/restaurants`)
             .then(res => {
                 const approvedRestaurants = res.data.filter(restaurant => restaurant.approved);
                 setRestaurants(approvedRestaurants);
