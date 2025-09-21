@@ -1,2 +1,45 @@
-frontend/node_modules/.cache/default-development/0.pack
-frontend/node_modules/.cache/default-development/2.packnode_modules/ 
+# Node modules (for both frontend and backend)
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build and dist folders
+build/
+dist/
+frontend/build/
+backend/build/
+frontend/dist/
+backend/dist/
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Cache folders (to prevent the GitHub large file error)
+.cache/
+frontend/.cache/
+frontend/node_modules/.cache/
+backend/.cache/
+backend/node_modules/.cache/
+
+# Coverage
+coverage/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# VSCode settings
+.vscode/
+
+# npm/yarn/lock files (optional if you don't want to track them)
+# package-lock.json
+# yarn.lock
+
+# Others
+*.tgz
+*.tsbuildinfo
