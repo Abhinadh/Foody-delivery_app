@@ -6,7 +6,9 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: "https://foody-delivery-app-kappa.vercel.app/"
+  origin: "https://foody-delivery-jknyfcfgr-abhis-projects-db5704d2.vercel.app/",
+    credentials: true
+
 }));
 
 // Database Connection
