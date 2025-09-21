@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://foody-backend-l2zy.onrender.com/api/:path*"
+    }
+  ]
+}
