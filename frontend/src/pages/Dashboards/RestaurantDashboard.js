@@ -16,6 +16,8 @@ export default function RestaurantDashboard() {
     const [feedback, setFeedback] = useState([]);
     const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
 
+    const BACKEND_URI =process.env.BACKEND_URI
+
     const { user, logout } = useUser();
     const navigate = useNavigate();
 

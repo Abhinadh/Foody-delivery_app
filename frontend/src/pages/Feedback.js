@@ -5,6 +5,7 @@ const FeedbackForm = ({ itemId,orderId, restaurantEmail, userId, onClose }) => {
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState("");
     const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+    const BACKEND_URI =process.env.BACKEND_URI
 
     const submitFeedback = async () => {
         try {

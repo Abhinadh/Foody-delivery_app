@@ -7,6 +7,7 @@ export default function Orders() {
     const [orders, setOrders] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
     const { user } = useUser();
+    const BACKEND_URI =process.env.BACKEND_URI
 
     useEffect(() => {
         if (user?.id) {

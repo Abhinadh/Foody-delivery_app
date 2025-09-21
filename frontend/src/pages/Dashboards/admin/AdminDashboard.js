@@ -12,6 +12,7 @@ export default function AdminDashboard() {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
     const { logout } = useUser();
+    const BACKEND_URI =process.env.BACKEND_URI
     const navigate = useNavigate();
 
     useEffect(() => {

@@ -10,6 +10,7 @@ import "../styles/Cartlocation.css"
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyDfnv9HFPrIMlVBMoFSl6LSBQj5G3rbOJo";
 const RAZORPAY_KEY = "rzp_test_QK253G04y7gzR4";
+const BACKEND_URI =process.env.BACKEND_URI
 
 const Cart = () => {
     const { user } = useUser();

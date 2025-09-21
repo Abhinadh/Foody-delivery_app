@@ -8,6 +8,7 @@ export default function Register() {
   const query = new URLSearchParams(useLocation().search);
   const type = query.get("type"); // user, restaurant, deliveryboy
   const navigate = useNavigate();
+  const BACKEND_URI =process.env.BACKEND_URI
 
   const [formData, setFormData] = useState({
     name: "",

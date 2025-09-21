@@ -19,6 +19,7 @@ const OrderModal = ({ itemId, quantities, name, restaurantName, restaurantEmail,
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [autocomplete, setAutocomplete] = useState(null);
     const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
+    const BACKEND_URI =process.env.BACKEND_URI
 
     useEffect(() => {
         if (window.google) {

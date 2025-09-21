@@ -6,6 +6,7 @@ import { useUser } from "../context/UserContext";
 const mapContainerStyle = { width: "100%", height: "350px" }; // Increased map height
 const googleMapsApiKey = "AIzaSyDfnv9HFPrIMlVBMoFSl6LSBQj5G3rbOJo"; // Replace with your key
 const libraries = ["places"];
+const BACKEND_URI =process.env.BACKEND_URI
 
 const DabbawalaForm = () => {
   const { user } = useUser();

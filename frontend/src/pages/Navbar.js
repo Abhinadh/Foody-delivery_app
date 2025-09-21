@@ -21,6 +21,7 @@ const Navbar = ({ setShowModal, setModalType }) => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [query, setQuery] = useState("");
     const navigate = useNavigate();
+    const BACKEND_URI =process.env.BACKEND_URI
 
     // Enhanced icon style with hover effect
     const iconStyle = { 

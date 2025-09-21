@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const FeedbackPage = () => {
     const [feedback, setFeedback] = useState([]);
+    const BACKEND_URI =process.env.BACKEND_URI
 
     useEffect(() => {
         fetch(`${BACKEND_URI}/api/auth/feedback/fetch`) // Adjust URL as needed

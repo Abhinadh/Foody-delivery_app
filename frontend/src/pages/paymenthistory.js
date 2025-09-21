@@ -9,13 +9,15 @@ const PaymentHistoryPage = () => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 
+        'ascending' });
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    
 
     useEffect(() => {
         setLoading(true);
-        axios.get(`http://localhost:5000/api/auth/paymentsfetch`)
+        axios.get(`${process.env.BACKEND_URI}/api/auth/paymentsfetch`)
             .then(res => {
                 setPayments(res.data);
                 setLoading(false);

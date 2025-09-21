@@ -8,6 +8,7 @@ const RestaurantModal = ({ restaurant, onClose }) => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null); // State to track selected item for ordering
+  const BACKEND_URI =process.env.BACKEND_URI
 
   useEffect(() => {
     if (restaurant && restaurant.email) {

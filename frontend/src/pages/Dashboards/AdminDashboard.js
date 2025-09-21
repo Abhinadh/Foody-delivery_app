@@ -5,6 +5,7 @@ export default function AdminDashboard() {
     const [restaurants, setRestaurants] = useState([]);
     const [deliveryBoys, setDeliveryBoys] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");  // State for search query
+    const BACKEND_URI =process.env.BACKEND_URI
 
     useEffect(() => {
         fetchRestaurants();

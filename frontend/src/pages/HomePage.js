@@ -30,6 +30,7 @@ const Home = () => {
     const [restaurantNames, setRestaurantNames] = useState({});//restname
     const URI =process.env.BACKEND_URI
 
+
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
     const [restaurantDetails, setRestaurantDetails] = useState(null); // Add this state for restaurant modal
     const [filters, setFilters] = useState({
@@ -227,7 +228,7 @@ const Home = () => {
             setRestaurantDetails(restaurant);
             
             // Then fetch additional details if needed
-            const response = await axios.get(`${BACKEND_URI}/api/auth/restaurants/name/${restaurant._id}`);
+            const response = await axios.get(`${URI}/api/auth/restaurants/name/${restaurant._id}`);
             setRestaurantDetails(response.data);
             setSelectedRestaurant(response.data);
         } catch (error) {
@@ -314,7 +315,7 @@ const Home = () => {
                     {menuItems.length > 0 ? (
                         menuItems.map(item => (
                             <div key={item._id} className="menu-card-kjmn">
-                                <img className="menu-image-kjmn" src={`${BACKEND_URI}/api/auth/restaurant/menu/image/${item._id}`} alt={item.name} />
+                                <img className="menu-image-kjmn" src={`${URI}/api/auth/restaurant/menu/image/${item._id}`} alt={item.name} />
                                 <div className="menu-info-kjmn">
                                     <div className="menu-title">
                                         <h3>{item.name}</h3>

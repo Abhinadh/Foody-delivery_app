@@ -12,6 +12,7 @@ const DeliveryBoyDashboard = () => {
     const [showModal, setShowModal] = useState(false);
     const [mapUrl, setMapUrl] = useState("");
     const [activeTab, setActiveTab] = useState("orders");
+    const BACKEND_URI =process.env.BACKEND_URI
 
     // Fetch DeliveryBoy details and Dabbawala requests
     useEffect(() => {

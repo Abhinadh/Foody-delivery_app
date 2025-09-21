@@ -136,6 +136,7 @@ const OrderTracking = () => {
     const [emailSending, setEmailSending] = useState(false);
     const [activeTab, setActiveTab] = useState('food');
     const [debug, setDebug] = useState({ foodCount: 0, dabbawalaCount: 0 });
+    const BACKEND_URI =process.env.BACKEND_URI
 
     const mapStatusToNewFormat = (oldStatus) => {
         switch(oldStatus) {

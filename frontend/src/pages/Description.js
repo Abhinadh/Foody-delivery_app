@@ -17,6 +17,7 @@ const DescriptionModal = ({ item, onClose }) => {
     const [buyerName, setBuyerName] = useState("");
     const [restaurantEmail, setRestaurantEmail] = useState("");
     const [showLoginMessage, setShowLoginMessage] = useState(false);
+    const BACKEND_URI =process.env.BACKEND_URI
 
     useEffect(() => {
         if (item && item._id) {
