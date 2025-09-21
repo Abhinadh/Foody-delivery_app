@@ -7,6 +7,7 @@ import DescriptionModal from "./Description";
 import RestaurantModal from "./RestaurantModel"; // Import the new component
 import { useSearch } from "../context/SearchContext";
 
+
 const foodCategories = [
     { name: "Pizza", icon: "🍕" },
     { name: "Burger", icon: "🍔" },
@@ -27,6 +28,7 @@ const Home = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [foods, setFoods] = useState([]);
     const [restaurantNames, setRestaurantNames] = useState({});//restname
+    const URI =process.env.BACKEND_URI
 
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
     const [restaurantDetails, setRestaurantDetails] = useState(null); // Add this state for restaurant modal
@@ -44,7 +46,7 @@ const Home = () => {
     const [restaurants, setRestaurants] = useState([]);
     const [allRestaurants, setAllRestaurants] = useState([]);
     const { searchQuery } = useSearch(); 
-    const URI=process.env.BACKEND_URI
+   
     
     //restname
     useEffect(() => {
@@ -76,7 +78,7 @@ const Home = () => {
     }, [menuItems]);
 
     useEffect(() => {
-        axios.get("https://foody-backend-l2zy.onrender.com/api/auth/menu-items")
+        axios.get("URI/api/auth/menu-items")
             .then(res => {
                 setAllMenuItems(res.data);
                 setMenuItems(res.data);
@@ -85,7 +87,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        axios.get("https://foody-backend-l2zy.onrender.com/api/auth/admin/restaurants")
+        axios.get("URI/api/auth/admin/restaurants")
             .then(res => {
                 const approvedRestaurants = res.data.filter(restaurant => restaurant.approved);
                 setRestaurants(approvedRestaurants);
