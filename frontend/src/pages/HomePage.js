@@ -81,7 +81,7 @@ const Home = () => {
     useEffect(() => {
         axios.get(`${URL}/api/auth/menu-items`)
             .then(res => {
-             console.log(res.data); // make sure it's an array
+              // make sure it's an array
         setAllMenuItems(Array.isArray(res.data) ? res.data : []);
         setMenuItems(Array.isArray(res.data) ? res.data : []);
             })
@@ -91,7 +91,7 @@ const Home = () => {
     useEffect(() => {
         axios.get(`${URL}/api/auth/admin/restaurants`)
             .then(res => {
-                  console.log(res.data);  // Inspect this in Vercel or locally
+                    // Inspect this in Vercel or locally
         const restaurantsArray = Array.isArray(res.data) ? res.data : Object.values(res.data);
         const approvedRestaurants = restaurantsArray.filter(restaurant => restaurant.approved);
         setRestaurants(approvedRestaurants);
