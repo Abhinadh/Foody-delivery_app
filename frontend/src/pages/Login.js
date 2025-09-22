@@ -6,7 +6,7 @@ export default function Login() {
   const [credentials, setCredentials] = useState({});
   const navigate = useNavigate();
   
-const BACKEND_URI =process.env.BACKEND_URI
+// const BACKEND_URI =process.env.BACKEND_URI
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };

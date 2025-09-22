@@ -170,7 +170,7 @@ const Modal = ({ modalType, setModalType, setShowModal }) => {
         
         try {
             if (modalType === "login") {
-                const res = await axios.post(`${BACKEND_URI}/api/auth/login`, credentials);
+                const res = await axios.post(`https://foody-backend-l2zy.onrender.com/api/auth/login`, credentials);
                 setUser({ id: res.data.account._id, email: res.data.account.email, role: res.data.account.role });
                 setShowSuccessModal("login");
                 setTimeout(() => {
@@ -178,7 +178,7 @@ const Modal = ({ modalType, setModalType, setShowModal }) => {
                     navigate(`/dashboard/${res.data.account.role}`);
                 }, 2000);
             } else {
-                await axios.post(`${BACKEND_URI}/api/auth/register`, { ...credentials, role: selectedRole });
+                await axios.post(`https://foody-backend-l2zy.onrender.com/api/auth/register`, { ...credentials, role: selectedRole });
                 setShowSuccessModal("signup");
                 setTimeout(() => {
                     resetForm();
