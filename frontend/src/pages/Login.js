@@ -14,7 +14,7 @@ const BACKEND_URI =process.env.BACKEND_URI
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`https://foody-delivery-app-new-abhis-projects-db5704d2.vercel.app/api/auth/login`, credentials);
+      const res = await axios.post(`https://foody-backend-l2zy.onrender.com/api/auth/login`, credentials);
       alert('Login successful');
       navigate(`/dashboard/${res.data.account.role}`); // Corrected response handling
     } catch (err) {
