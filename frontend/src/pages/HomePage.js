@@ -89,7 +89,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        axios.get(`${URL}/api/auth/admin/restaurants`)
+        axios.get('https://foody-backend-l2zy.onrender.com/api/auth/admin/restaurants')
             .then(res => {
                     // Inspect this in Vercel or locally
         const restaurantsArray = Array.isArray(res.data) ? res.data : Object.values(res.data);
