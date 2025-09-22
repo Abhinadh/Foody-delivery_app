@@ -38,7 +38,7 @@ export default function Register() {
     console.log("Sending Data:", formData);
 
     try {
-      await axios.post(`${BACKEND_URI}/api/auth/register`, formData);
+      await axios.post(`https://foody-backend-l2zy.onrender.com/api/auth/register`, formData);
       alert(`${type} registered successfully`);
       navigate("/login");
     } catch (err) {
