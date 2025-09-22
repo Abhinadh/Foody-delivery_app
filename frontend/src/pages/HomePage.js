@@ -54,7 +54,7 @@ const Home = () => {
         const fetchRestaurantNames = async () => {
             const namePromises = menuItems.map(async (item) => {
                 try {
-                    const response = await axios.get(`${URL}/api/auth/menu-items/restaurant/name/${item.restaurantId}`);
+                    const response = await axios.get(`https://foody-backend-l2zy.onrender.com/api/auth/menu-items/restaurant/name/${item.restaurantId}`);
                     return { itemId: item._id, name: response.data.name };
                 } catch (error) {
                     console.error('Error fetching restaurant name:', error);
@@ -79,7 +79,7 @@ const Home = () => {
     }, [menuItems]);
 
     useEffect(() => {
-        axios.get(`${URL}/api/auth/menu-items`)
+        axios.get(`https://foody-backend-l2zy.onrender.com/api/auth/menu-items`)
             .then(res => {
               // make sure it's an array
         setAllMenuItems(Array.isArray(res.data) ? res.data : []);
@@ -318,7 +318,7 @@ const Home = () => {
                     {menuItems.length > 0 ? (
                         menuItems.map(item => (
                             <div key={item._id} className="menu-card-kjmn">
-                                <img className="menu-image-kjmn" src={`https://foody-backend-l2zy.onrender.com/api/auth/restaurant/menu/image/${item._id}`} alt={item.name} />
+                                <img className="menu-image-kjmn" src={`https://foody-backend-l2zy.onrender.comf/api/auth/restaurant/menu/image/${item._id}`} alt={item.name} />
                                 <div className="menu-info-kjmn">
                                     <div className="menu-title">
                                         <h3>{item.name}</h3>
