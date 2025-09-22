@@ -89,7 +89,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('https://foody-backend-l2zy.onrender.com/api/auth/admin/restaurants')
+        axios.get("https://foody-backend-l2zy.onrender.com/api/auth/admin/restaurants")
             .then(res => {
                     // Inspect this in Vercel or locally
         const restaurantsArray = Array.isArray(res.data) ? res.data : Object.values(res.data);
@@ -231,7 +231,7 @@ const Home = () => {
             setRestaurantDetails(restaurant);
             
             // Then fetch additional details if needed
-            const response = await axios.get(`${URL}/api/auth/restaurants/name/${restaurant._id}`);
+            const response = await axios.get(`https://foody-backend-l2zy.onrender.com/api/auth/restaurants/name/${restaurant._id}`);
             setRestaurantDetails(response.data);
             setSelectedRestaurant(response.data);
         } catch (error) {
@@ -318,7 +318,7 @@ const Home = () => {
                     {menuItems.length > 0 ? (
                         menuItems.map(item => (
                             <div key={item._id} className="menu-card-kjmn">
-                                <img className="menu-image-kjmn" src={`${URL}/api/auth/restaurant/menu/image/${item._id}`} alt={item.name} />
+                                <img className="menu-image-kjmn" src={`https://foody-backend-l2zy.onrender.com/api/auth/restaurant/menu/image/${item._id}`} alt={item.name} />
                                 <div className="menu-info-kjmn">
                                     <div className="menu-title">
                                         <h3>{item.name}</h3>
