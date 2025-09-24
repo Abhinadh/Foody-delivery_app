@@ -26,7 +26,7 @@ export default function RestaurantDashboard() {
 
     const fetchMenuItems = async () => {
         try {
-            const res = await axios.get(`${process.env.BACKEND_URI}/api/auth/restaurant/${user.id}/menu`);
+            const res = await axios.get(`https://foody-backend-l2zy.onrender.com/api/auth/restaurant/${user.id}/menu`);
             if (JSON.stringify(res.data) !== JSON.stringify(menuItems)) {
                 setMenuItems(Array.isArray(res.data) ? res.data : []);
                  setMenuItems([]);
@@ -40,7 +40,7 @@ export default function RestaurantDashboard() {
     const fetchFeedback = async () => {
         setIsLoadingFeedback(true);
         try {
-            const res = await axios.get(`${process.env.BACKEND_URI}/api/auth/restaurant/feedback/fetch/${user.email}`);
+            const res = await axios.get(`https://foody-backend-l2zy.onrender.com/api/auth/restaurant/feedback/fetch/${user.email}`);
             setFeedback(Array.isArray(res.data) ? res.data : []);
             setShowFeedbackModal(true);
         } catch (error) {
