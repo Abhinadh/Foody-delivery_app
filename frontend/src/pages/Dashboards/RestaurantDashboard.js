@@ -69,6 +69,7 @@ export default function RestaurantDashboard() {
         formData.append("image", newItem.image);
 
         try {
+            console.log(process.env.REACT_APP_BACKEND_URI)
             await axios.post(`${process.env.REACT_APP_BACKEND_URI}/api/auth/restaurant/menu/add`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });

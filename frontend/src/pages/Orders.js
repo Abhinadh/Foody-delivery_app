@@ -7,7 +7,7 @@ export default function Orders() {
     const [orders, setOrders] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
     const { user } = useUser();
-    const BACKEND_URI =process.env.BACKEND_URI
+    const BACKEND_URI =process.env.REACT_APP_BACKEND_URI
 
     useEffect(() => {
         if (user?.id) {
@@ -20,9 +20,10 @@ export default function Orders() {
             console.log(user.id);
             const res = await axios.get(`${BACKEND_URI}/api/auth/orders/${user.id}`);
             console.log(res.data);
-            setOrders(res.data);
+            setOrders(Array.isArray(res.data)?res.data:[]);
         } catch (error) {
             console.error("Error fetching orders:", error);
+            setOrders([])
         }
     };
 
