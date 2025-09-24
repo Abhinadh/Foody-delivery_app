@@ -70,7 +70,7 @@ export default function RestaurantDashboard() {
 
         try {
             console.log(process.env.REACT_APP_BACKEND_URI)
-            await axios.post(`${process.env.REACT_APP_BACKEND_URI}/api/auth/restaurant/menu/add`, formData, {
+            await axios.post(`https://foody-backend-l2zy.onrender.com/api/auth/restaurant/menu/add`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             alert("Menu item added successfully!");
