@@ -69,7 +69,7 @@ export default function RestaurantDashboard() {
         formData.append("image", newItem.image);
 
         try {
-            await axios.post(`${process.env.BACKEND_URI}/api/auth/restaurant/menu/add`, formData, {
+            await axios.post(`${process.env.REACT_APP_BACKEND_URI}/api/auth/restaurant/menu/add`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             alert("Menu item added successfully!");
@@ -89,7 +89,7 @@ export default function RestaurantDashboard() {
 
     const handleDeleteMenuItem = async (id) => {
         try {
-            await axios.delete(`${process.env.BACKEND_URI}/api/auth/restaurant/menu/delete/${id}`);
+            await axios.delete(`${process.env.REACT_APP_BACKEND_URI}/api/auth/restaurant/menu/delete/${id}`);
             alert("Menu item deleted successfully!");
             fetchMenuItems();
         } catch (error) {
@@ -106,7 +106,7 @@ export default function RestaurantDashboard() {
 
     const handleSaveAvailability = async () => {
         try {
-            await axios.put(`${process.env.BACKEND_URI}/api/auth/restaurant/menu/update-availability/${currentItem._id}`, {
+            await axios.put(`${process.env.REACT_APP_BACKEND_URI}/api/auth/restaurant/menu/update-availability/${currentItem._id}`, {
                 availability: parseInt(newAvailability, 10)
             });
             alert("Availability updated successfully!");
@@ -368,7 +368,7 @@ export default function RestaurantDashboard() {
                             <div style={dashboardStyles.imageContainer}>
                                 {item._id && 
                                     <img 
-                                        src={`${process.env.BACKEND_URI}/api/auth/restaurant/menu/image/${item._id}`} 
+                                        src={`${process.env.REACT_APP_BACKEND_URI}/api/auth/restaurant/menu/image/${item._id}`} 
                                         alt={item.name} 
                                         style={dashboardStyles.menuImage}
                                     />
