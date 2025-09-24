@@ -28,22 +28,25 @@ export default function RestaurantDashboard() {
         try {
             const res = await axios.get(`${process.env.BACKEND_URI}/api/auth/restaurant/${user.id}/menu`);
             if (JSON.stringify(res.data) !== JSON.stringify(menuItems)) {
-                setMenuItems(res.data);
+                setMenuItems(Array.isArray(res.data) ? res.data : []);
+                 setMenuItems([]);
             }
         } catch (error) {
             console.error("Error fetching menu items:", error);
         }
+       
     };
 
     const fetchFeedback = async () => {
         setIsLoadingFeedback(true);
         try {
             const res = await axios.get(`${process.env.BACKEND_URI}/api/auth/restaurant/feedback/fetch/${user.email}`);
-            setFeedback(res.data);
+            setFeedback(Array.isArray(res.data) ? res.data : []);
             setShowFeedbackModal(true);
         } catch (error) {
             console.error("Error fetching feedback:", error);
             alert("Error loading feedback");
+            setFeedback([])
         } finally {
             setIsLoadingFeedback(false);
         }
