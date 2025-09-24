@@ -16,8 +16,7 @@ export default function RestaurantDashboard() {
     const [feedback, setFeedback] = useState([]);
     const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
 
-    const BACKEND_URI =process.env.BACKEND_URI
-
+   
     const { user, logout } = useUser();
     const navigate = useNavigate();
 
@@ -27,7 +26,7 @@ export default function RestaurantDashboard() {
 
     const fetchMenuItems = async () => {
         try {
-            const res = await axios.get(`${BACKEND_URI}/api/auth/restaurant/${user.id}/menu`);
+            const res = await axios.get(`${process.env.BACKEND_URI}/api/auth/restaurant/${user.id}/menu`);
             if (JSON.stringify(res.data) !== JSON.stringify(menuItems)) {
                 setMenuItems(res.data);
             }
@@ -39,7 +38,7 @@ export default function RestaurantDashboard() {
     const fetchFeedback = async () => {
         setIsLoadingFeedback(true);
         try {
-            const res = await axios.get(`${BACKEND_URI}/api/auth/restaurant/feedback/fetch/${user.email}`);
+            const res = await axios.get(`${process.env.BACKEND_URI}/api/auth/restaurant/feedback/fetch/${user.email}`);
             setFeedback(res.data);
             setShowFeedbackModal(true);
         } catch (error) {
@@ -67,7 +66,7 @@ export default function RestaurantDashboard() {
         formData.append("image", newItem.image);
 
         try {
-            await axios.post(`${BACKEND_URI}/api/auth/restaurant/menu/add`, formData, {
+            await axios.post(`${process.env.BACKEND_URI}/api/auth/restaurant/menu/add`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             alert("Menu item added successfully!");
@@ -87,7 +86,7 @@ export default function RestaurantDashboard() {
 
     const handleDeleteMenuItem = async (id) => {
         try {
-            await axios.delete(`${BACKEND_URI}/api/auth/restaurant/menu/delete/${id}`);
+            await axios.delete(`${process.env.BACKEND_URI}/api/auth/restaurant/menu/delete/${id}`);
             alert("Menu item deleted successfully!");
             fetchMenuItems();
         } catch (error) {
@@ -104,7 +103,7 @@ export default function RestaurantDashboard() {
 
     const handleSaveAvailability = async () => {
         try {
-            await axios.put(`${BACKEND_URI}/api/auth/restaurant/menu/update-availability/${currentItem._id}`, {
+            await axios.put(`${process.env.BACKEND_URI}/api/auth/restaurant/menu/update-availability/${currentItem._id}`, {
                 availability: parseInt(newAvailability, 10)
             });
             alert("Availability updated successfully!");
@@ -366,7 +365,7 @@ export default function RestaurantDashboard() {
                             <div style={dashboardStyles.imageContainer}>
                                 {item._id && 
                                     <img 
-                                        src={`${BACKEND_URI}/api/auth/restaurant/menu/image/${item._id}`} 
+                                        src={`${process.env.BACKEND_URI}/api/auth/restaurant/menu/image/${item._id}`} 
                                         alt={item.name} 
                                         style={dashboardStyles.menuImage}
                                     />
