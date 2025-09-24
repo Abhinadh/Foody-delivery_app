@@ -29,10 +29,11 @@ export default function RestaurantDashboard() {
             const res = await axios.get(`https://foody-backend-l2zy.onrender.com/api/auth/restaurant/${user.id}/menu`);
             if (JSON.stringify(res.data) !== JSON.stringify(menuItems)) {
                 setMenuItems(Array.isArray(res.data) ? res.data : []);
-                 setMenuItems([]);
+                 
             }
         } catch (error) {
             console.error("Error fetching menu items:", error);
+            setMenuItems([]);
         }
        
     };
