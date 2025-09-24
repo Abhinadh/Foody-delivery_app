@@ -8,7 +8,7 @@ import { FaUser, FaUtensils, FaMotorcycle } from "react-icons/fa";
 import SuccessModal from "./Successmodal";
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyCPfWpbibiw83RQsxELttr0vL9Ic64Sf9s";
-const BACKEND_URI =process.env.BACKEND_URI
+// const BACKEND_URI =process.env.BACKEND_URI
 
 const Modal = ({ modalType, setModalType, setShowModal }) => {
     const [credentials, setCredentials] = useState({});
